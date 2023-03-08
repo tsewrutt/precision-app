@@ -7,6 +7,7 @@ TagManager:
   - crosshair
   - wall
   - target
+  - starttarget
   layers:
   - Default
   - TransparentFX
