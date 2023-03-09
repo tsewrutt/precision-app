@@ -28,7 +28,7 @@ public class MainScript : MonoBehaviour
     //  private bool displayText;
     private float timeRemaining;
 
-    //Color Config
+    //Crosshair Color Config 
     public Image[] images;
     public Color red;
     public Color green;
@@ -36,13 +36,20 @@ public class MainScript : MonoBehaviour
     public Color black;
     public Color white;
 
+    //Wall Color Config
+    public GameObject[] walls;
+    public Material black_mat;
+    public Material white_mat;
+    public Material green_mat;
+
     //flags
     public bool roundflag = true;
+    public int crossflag = 0;
     private void Start()
     {
         //nothing happens here
-        RunMainTest();
-        timeRemaining = delayTime;
+        //  RunMainTest();
+        SetDelayTime();
         stopwatch = new Stopwatch();
         game_status = ColorBackground.Black;
     }
@@ -68,35 +75,136 @@ public class MainScript : MonoBehaviour
             switch (game_status)
             {
                 case ColorBackground.Black:
-                    CrosshairColorChanger(red);
-                    SpawnContinueTarget();
-                    StartCoroutine(WaitForStartTargetDestroyed());
-                    // StartCoroutine(WaitUntilRoundIsDone());
-                    //game_status = ColorBackground.White;
-                    // CrosshairColorChanger(green);
-                    // CrosshairColorChanger(blue);
-                    // CrosshairColorChanger(black);
-                    //  CrosshairColorChanger(white);
-                    targetSpawn.roundDone = false;
+                    BackgroundColorChanger(black_mat);
+                    switch (crossflag)
+                    {
+                        case 0:
+                            CrosshairColorChanger(red);
+                            SpawnContinueTarget();
+                            SetDelayTime();
+                            StartCoroutine(WaitForStartTargetDestroyed());
+                            break;
+
+                        case 1:
+                            CrosshairColorChanger(green);
+                            SpawnContinueTarget();
+                            SetDelayTime();
+                            StartCoroutine(WaitForStartTargetDestroyed());
+                            break;
+
+                        case 2:
+                            CrosshairColorChanger(blue);
+                            SpawnContinueTarget();
+                            SetDelayTime();
+                            StartCoroutine(WaitForStartTargetDestroyed());
+                            break;
+                        case 3:
+                            CrosshairColorChanger(black);
+                            SpawnContinueTarget();
+                            SetDelayTime();
+                            StartCoroutine(WaitForStartTargetDestroyed());
+                            break;
+                        case 4:
+                            CrosshairColorChanger(white);
+                            SpawnContinueTarget();
+                            SetDelayTime();
+                            StartCoroutine(WaitForStartTargetDestroyed());
+                            break;
+                    }
+                    
+                   // targetSpawn.roundDone = false;
                     Debug.Log("BlackSesh");
 
                     break;
 
                 case ColorBackground.White:
-                    CrosshairColorChanger(green);
-                    SpawnContinueTarget();
-                    StartCoroutine(WaitForStartTargetDestroyed());
+                    BackgroundColorChanger(white_mat);
+                    switch (crossflag)
+                    {
+                        case 0:
+                            CrosshairColorChanger(red);
+                            SpawnContinueTarget();
+                            SetDelayTime();
+                            StartCoroutine(WaitForStartTargetDestroyed());
+                            break;
+
+                        case 1:
+                            CrosshairColorChanger(green);
+                            SpawnContinueTarget();
+                            SetDelayTime();
+                            StartCoroutine(WaitForStartTargetDestroyed());
+                            break;
+
+                        case 2:
+                            CrosshairColorChanger(blue);
+                            SpawnContinueTarget();
+                            SetDelayTime();
+                            StartCoroutine(WaitForStartTargetDestroyed());
+                            break;
+                        case 3:
+                            CrosshairColorChanger(black);
+                            SpawnContinueTarget();
+                            SetDelayTime();
+                            StartCoroutine(WaitForStartTargetDestroyed());
+                            break;
+                        case 4:
+                            CrosshairColorChanger(white);
+                            SpawnContinueTarget();
+                            SetDelayTime();
+                            StartCoroutine(WaitForStartTargetDestroyed());
+                            break;
+                    }
                     Debug.Log("White Sesh");
                     break;
 
                 case ColorBackground.Blue:
+                    BackgroundColorChanger(green_mat);
+                    switch (crossflag)
+                    {
+                        case 0:
+                            CrosshairColorChanger(red);
+                            SpawnContinueTarget();
+                            SetDelayTime();
+                            StartCoroutine(WaitForStartTargetDestroyed());
+                            break;
 
+                        case 1:
+                            CrosshairColorChanger(green);
+                            SpawnContinueTarget();
+                            SetDelayTime();
+                            StartCoroutine(WaitForStartTargetDestroyed());
+                            break;
+
+                        case 2:
+                            CrosshairColorChanger(blue);
+                            SpawnContinueTarget();
+                            SetDelayTime();
+                            StartCoroutine(WaitForStartTargetDestroyed());
+                            break;
+                        case 3:
+                            CrosshairColorChanger(black);
+                            SpawnContinueTarget();
+                            SetDelayTime();
+                            StartCoroutine(WaitForStartTargetDestroyed());
+                            break;
+                        case 4:
+                            CrosshairColorChanger(white);
+                            SpawnContinueTarget();
+                            SetDelayTime();
+                            StartCoroutine(WaitForStartTargetDestroyed());
+                            break;
+                    }
                     Debug.Log("Blue Sesh");
                     break;
             }
             roundflag = false;
         }
         
+    }
+
+    private void SetDelayTime()
+    {
+        timeRemaining = delayTime;
     }
 
     private IEnumerator WaitForStartTargetDestroyed()
@@ -137,16 +245,25 @@ public class MainScript : MonoBehaviour
         }
     }
 
+    private void BackgroundColorChanger(Material mat)
+    {
+        foreach (GameObject wall in walls)
+        {
+            Renderer renderer = wall.GetComponent<Renderer>();
+            renderer.material = mat;
+        }
+    }
+
     private void SpawnContinueTarget()
     {
         Instantiate(startTargetPrefab, spawnPosition, Quaternion.identity);
     }
 
-    IEnumerator WaitUntilRoundIsDone()
+/*    IEnumerator WaitUntilRoundIsDone()
     {
         while(targetSpawn.roundDone != true)
         {
             yield return null;
         }
-    }
+    }*/
 }

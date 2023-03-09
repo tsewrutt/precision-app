@@ -19,14 +19,19 @@ public class TargetSpawner : MonoBehaviour
     private float totalTimeTaken;
    
     public List<GameObject> targets = new List<GameObject>();
-
+    private List<GameObject> resettargetarray = new List<GameObject>();
     //game script help
-    public bool roundDone;
+    public bool roundDone = true;
     void Start()
     {
         Bounds boxRegion = new Bounds((boxMaxPt + boxMinPt) / 2, boxMaxPt - boxMinPt);
-        roundDone = false;
+        //roundDone = false;
         stopwatch = new Stopwatch();
+        foreach(GameObject go in targets)
+        {
+            resettargetarray.Add(go);
+        }
+
     }
 
     private Vector3 GetRandomPosition()
@@ -40,12 +45,12 @@ public class TargetSpawner : MonoBehaviour
 
     public void SpawnTargets()
     {
-        if(checkStopWatch == false)
+        if(roundDone != false)
         {
-            stopwatch.Reset();
-            stopwatch.Start();
-            checkStopWatch = true;
+            StartTimer();
+            roundDone = false;
         }
+       
 
         if(targets.Count > 0)
         {
@@ -66,13 +71,62 @@ public class TargetSpawner : MonoBehaviour
         {
             //when all targets are destroyed
             stopwatch.Stop();
-            //set to false again for next target run, so it resets and start recording again
-            checkStopWatch = false;
-            displayRoundTime();
             roundDone = true;
-            ms.game_status = MainScript.ColorBackground.White;
-            ms.roundflag = true;
+            //set to false again for next target run, so it resets and start recording again
+            displayRoundTime();
+            //roundDone = true;
+            //ms.game_status = MainScript.ColorBackground.White;
+            if(ms.crossflag == 0)
+            {
+                ResetArrayOfPrefabs();
+                ms.roundflag = true;
+                ms.crossflag = 1;
+            }
+            else if(ms.crossflag == 1)
+            {
+                ResetArrayOfPrefabs();
+                ms.roundflag = true;
+                ms.crossflag = 2;
+            }
+            else if(ms.crossflag == 2)
+            {
+                ResetArrayOfPrefabs();
+                ms.roundflag = true;
+                ms.crossflag = 3;
+            }
+            else if(ms.crossflag == 3)
+            {
+                ResetArrayOfPrefabs();
+                ms.roundflag = true;
+                ms.crossflag = 4;
+            }
+            else
+            {
+                //resets for the next target spawner
+                ms.crossflag = 0;
+                ms.roundflag = true;
+                //need to change to next status here
+                //check other project to move enum
+                ResetArrayOfPrefabs();
+                ms.game_status = (MainScript.ColorBackground)(((int)ms.game_status + 1) % Enum.GetNames(typeof(MainScript.ColorBackground)).Length);
+            }
+
+            //ms.roundflag = true;
         }
+    }
+
+    private void ResetArrayOfPrefabs()
+    {
+        foreach (GameObject go in resettargetarray)
+        {
+            targets.Add(go);
+        }
+    }
+
+    private void StartTimer()
+    {
+        stopwatch.Reset();
+        stopwatch.Start();
     }
 
     public IEnumerator WaitForTargetDestroyed()
@@ -85,6 +139,25 @@ public class TargetSpawner : MonoBehaviour
 
         //otherwise spawn next target
         SpawnTargets();
+    }
+
+
+    private void displayRoundTime()
+    {
+
+        TimeSpan elapsedTime = TimeSpan.FromMilliseconds(stopwatch.ElapsedMilliseconds);
+        totalTimeTaken += stopwatch.ElapsedMilliseconds;
+
+        UnityEngine.Debug.Log("Elapsed Time: " + elapsedTime.ToString("mm':'ss"));
+    }
+
+
+
+    //this will be displayed at the end of the testing
+    private void displayTotalTimeTaken()
+    {
+        TimeSpan elapsedTime = TimeSpan.FromMilliseconds(totalTimeTaken);
+        UnityEngine.Debug.Log("Elapsed Time: " + elapsedTime.ToString("mm':'ss"));
     }
 
     private void displayRecordTable()
@@ -133,23 +206,6 @@ public class TargetSpawner : MonoBehaviour
         UnityEngine.Debug.Log("---------------------------");
 
         //for colorblindness// UnityEngine.Debug.Log("Crosshair Color: Purple");
-    }
-    private void displayRoundTime()
-    {
-
-        TimeSpan elapsedTime = TimeSpan.FromMilliseconds(stopwatch.ElapsedMilliseconds);
-        totalTimeTaken += stopwatch.ElapsedMilliseconds;
-
-        UnityEngine.Debug.Log("Elapsed Time: " + elapsedTime.ToString("mm':'ss"));
-    }
-
-
-
-    //this will be displayed at the end of the testing
-    private void displayTotalTimeTaken()
-    {
-        TimeSpan elapsedTime = TimeSpan.FromMilliseconds(totalTimeTaken);
-        UnityEngine.Debug.Log("Elapsed Time: " + elapsedTime.ToString("mm':'ss"));
     }
 
 }
