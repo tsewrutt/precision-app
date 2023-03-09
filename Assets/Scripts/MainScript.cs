@@ -24,7 +24,13 @@ public class MainScript : MonoBehaviour
     public float delayTime = 3f;
     public Text timer_txt;
 
-    private Stopwatch stopwatch;
+    //Audio
+    public GameObject go;
+    public GameObject one;
+    public GameObject two;
+    public GameObject three;
+
+    private AudioSource sound;
     //  private bool displayText;
     private float timeRemaining;
 
@@ -50,7 +56,8 @@ public class MainScript : MonoBehaviour
         //nothing happens here
         //  RunMainTest();
         SetDelayTime();
-        stopwatch = new Stopwatch();
+        //stopwatch = new Stopwatch();
+
         game_status = ColorBackground.Black;
     }
 
@@ -221,12 +228,36 @@ public class MainScript : MonoBehaviour
 
     IEnumerator WaitForInputSeconds()
     {
+        if(timeRemaining == 3)
+        {
+            sound = three.GetComponent<AudioSource>();
+            sound.Play();
+        }
+       
         while(timeRemaining > 0)
         {
+            if(timeRemaining == 2)
+            {
+                sound = two.GetComponent<AudioSource>();
+                sound.Play();
+            }
+            if (timeRemaining == 1)
+            {
+                sound = one.GetComponent<AudioSource>();
+                sound.Play();
+            }
             timer_txt.text = timeRemaining.ToString("F0");
             yield return new WaitForSeconds(1f);
+
+                
             timeRemaining--;
         }
+        if (timeRemaining == 0)
+        {
+            sound = go.GetComponent<AudioSource>();
+            sound.Play();
+        }
+        
         timer_txt.text = "Go!";
         
         yield return new WaitForSeconds(1f);
