@@ -2030,6 +2030,7 @@ MonoBehaviour:
   - {fileID: 3028615901533568299, guid: 1b39f420438ff924b9874e24327b2c4f, type: 3}
   - {fileID: 3028615901533568299, guid: 1b39f420438ff924b9874e24327b2c4f, type: 3}
   - {fileID: 3028615901533568299, guid: 1b39f420438ff924b9874e24327b2c4f, type: 3}
+  roundDone: 1
 --- !u!4 &2059882709
 Transform:
   m_ObjectHideFlags: 0
