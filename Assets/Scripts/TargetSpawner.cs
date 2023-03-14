@@ -1,6 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using System.Text;
+using System.IO;
+using System;
 using UnityEngine;
 using System.Diagnostics;
 using System;
@@ -13,25 +16,31 @@ public class TargetSpawner : MonoBehaviour
     public Vector3 boxMaxPt;// the box region where targets can spawn
     public int numTargets; // the number of targets to spawn
     public MainScript ms;
+    private int gloabalCounter;
+    
     //stopwatch stuff
     private Stopwatch stopwatch;
     private bool checkStopWatch = false;
     private float totalTimeTaken;
    
+   
     public List<GameObject> targets = new List<GameObject>();
     private List<GameObject> resettargetarray = new List<GameObject>();
+    private List<String> times = new List<String>();
+
     //game script help
     public bool roundDone = true;
     void Start()
     {
         Bounds boxRegion = new Bounds((boxMaxPt + boxMinPt) / 2, boxMaxPt - boxMinPt);
         //roundDone = false;
+        updateTable();
         stopwatch = new Stopwatch();
         foreach(GameObject go in targets)
         {
             resettargetarray.Add(go);
         }
-
+        gloabalCounter = 0;
     }
 
     private Vector3 GetRandomPosition()
@@ -109,6 +118,21 @@ public class TargetSpawner : MonoBehaviour
                 //check other project to move enum
                 ResetArrayOfPrefabs();
                 ms.game_status = (MainScript.ColorBackground)(((int)ms.game_status + 1) % Enum.GetNames(typeof(MainScript.ColorBackground)).Length);
+
+                gloabalCounter++;
+               
+                if(gloabalCounter == 3)
+                {
+                    //testing is done so update table
+                    updateTable();
+                    //then reset global counter to zero for next test
+                    gloabalCounter = 0;
+
+                    //reset time array
+                    times.Clear();
+
+                }
+            
             }
 
             //ms.roundflag = true;
@@ -147,7 +171,9 @@ public class TargetSpawner : MonoBehaviour
 
         TimeSpan elapsedTime = TimeSpan.FromMilliseconds(stopwatch.ElapsedMilliseconds);
         totalTimeTaken += stopwatch.ElapsedMilliseconds;
-
+        
+        times.Add(elapsedTime.ToString("mm':'ss"));
+        
         UnityEngine.Debug.Log("Elapsed Time: " + elapsedTime.ToString("mm':'ss"));
     }
 
@@ -206,6 +232,48 @@ public class TargetSpawner : MonoBehaviour
         UnityEngine.Debug.Log("---------------------------");
 
         //for colorblindness// UnityEngine.Debug.Log("Crosshair Color: Purple");
+    }
+
+
+    private void updateTable()
+    {
+        string filepath = "timesheet.csv";
+
+        //Write Attempt
+
+        string[] rows = File.ReadAllLines(filepath);
+        StreamWriter wr = new StreamWriter(filepath, true);
+
+        string[] columns = rows[0].Split(',');
+        string[] updatedCol = new string[columns.Length];
+        int i = 0;
+        foreach(string s in times)
+        {
+            updatedCol[i] = s;
+            i++;
+        }
+      
+        updatedCol[i] = totalTimeTaken.ToString("mm':'ss");
+        string updatedRow = string.Join(",", updatedCol);
+        wr.WriteLine(updatedRow);
+
+        wr.Close();
+
+
+    }
+
+    private int removeQuotations(string id)
+    {
+        int newid;
+
+        string[] splitResult = id.Split('"');
+        string s;
+        
+        s = string.Join("", splitResult).Trim();
+
+        newid = int.Parse(s);
+
+        return newid;
     }
 
 }
